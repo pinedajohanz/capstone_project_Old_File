@@ -21,7 +21,13 @@ import {LogIn} from './components/LogIn'
 import {SignUp} from './components/SignUp'
 import UserDash from './dashboard/UserDash'
 import AdminDash from './dashboard/AdminDash'
-
+import SeeResPersoInfo from './crud/user/SeeResPersoInfo';
+import SeeMyComp from './crud/user/SeeMyComp';
+import FileComp from './crud/user/FileComp';
+import SeeResponse from './crud/user/SeeResponse';
+import ResToComp from './crud/admin/ResToComp';
+import UpDelPage from './crud/admin/UpDelPage';
+import ViewAllRes from './crud/admin/ViewAllRes';
 // const router = createBrowserRouter([
 //   {
 //     path: "/",
@@ -46,12 +52,21 @@ root.render(
             	<Route path="/" element={<App />} />
                 <Route index element={<Home />} />
                 <Route path="/about" element={<AboutPage />} />
-                <Route path="/contact" element={<ContactUsPage />} />
+                <Route path="/contact" element={<ContactUsPage />} /> 
 
                 <Route path="/login" element={<LogIn />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/UserDash" element={<UserDash />} />
                 <Route path="/AdminDash" element={<AdminDash />} />
+
+                <Route path="/SeeResPersoInfo" element={<SeeResPersoInfo />} />
+                {/* <Route path="/SeeMyComp" element={<SeeMyComp />} /> */}
+                <Route path="/FileComp" element={<FileComp />} />
+                <Route path="/SeeResponse" element={<SeeResponse />} />
+
+                <Route path="/ResToComp" element={<ResToComp />} />
+                <Route path="/UpDelPage" element={<UpDelPage />} />
+                <Route path="/ViewAllRes" element={<ViewAllRes />} />
             </Routes>
         </BrowserRouter>
   </React.StrictMode>
