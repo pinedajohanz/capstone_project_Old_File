@@ -1,41 +1,50 @@
+import e from 'cors';
 import React, { useState } from 'react'
+import { ToastContainer, toast, Flip } from 'react-toastify'; 
 
 function Updatebtn({ Complaints }) {
+    // toastify function
+    const notify = () => {
+        toast.info("Status Updated!")
+    }
+
     // editNum function
-    // console.table(Complaints) // retrieving an object of Complaints
     const editNum = async (id) => {
         try {
-
+            // package the insert data in 'body'
             const body = {status_info_id}
-            // id = complaints_id???
+            
             const res = await fetch(`http://localhost:5000/updatecomp/${id}`, {
+                // put request to update it
                 method: "PUT",
+                // body of request is set as JSON
                 headers: { "Content-Type": "application/json"},
+                // convert the JS object to a JSON string
                 body: JSON.stringify(body)
             });
-
-            // console.log(id) // retrieving 1
-            window.location = "/UpDelPage"
+            //notification for update status
+            notify()
+            
+            window.location = "/UpdateDeleteStatus"
         } catch (err) {
             console.error(err.message)
         }
     }
-
+    // useState(props.default value)
     const [status_info_id, setStatus_info_id] = useState(Complaints.status_info_id)
-    //console.log(Complaints.status_info_id) // 0, 0, 1, 1 and 0, 0, 1, 1
-    //console.log(status_info_id) // retrieves 0, 0, 1, 1
+
   return (
     <>
         
         <button 
             type="button" 
-            className="btn btn-warning" 
+            className="btn btn-primary" 
             data-bs-toggle="modal" 
+            // target complaint id row to update
             data-bs-target={`#id${Complaints.complaints_id}`}
         >
             Update
         </button>
-        {/* id = "id22" */}
 
         <div className="modal fade" id={`id${Complaints.complaints_id}`} tabIndex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
         <div className="modal-dialog">
@@ -56,15 +65,19 @@ function Updatebtn({ Complaints }) {
                 </button>
             </div>
             <div className="modal-body">
-                <p>0 = IN-PROGRESS  ||||||  1 = COMPLETED</p>
-                <input 
-                type="number" 
+                {/* updating the status via select a option in dropdown */}
+                <p> Select: IN-PROGRESS  /  COMPLETED</p>
+                <select 
                 className="form-control" 
                 value={status_info_id} 
                 onChange={e => setStatus_info_id(e.target.value)} 
-                />
+                > 
+                   <option value="0">IN-PROGRESS</option>
+                    <option value="1">COMPLETED</option>
+                </select>
             </div>
             <div className="modal-footer">
+                {/* button to execute edit status function */}
             <button 
                 type="button" 
                 className="btn btn-warning"
@@ -84,6 +97,18 @@ function Updatebtn({ Complaints }) {
             </div>
         </div>
         </div>
+        <ToastContainer
+            position="top-right"
+            autoClose={9000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="colored" 
+            transition={Flip}  />
     </>
   )
 }

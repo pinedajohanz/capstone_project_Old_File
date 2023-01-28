@@ -1,10 +1,10 @@
-import React, { useState } from "react"
+import React from "react"
 import './App.css';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import Home from './pages/Home'
-
+import 'react-toastify/dist/ReactToastify.css';
 
 // return - same as render (nirerender sa screen ni user)
+// renders the Home component in App function
 function App() {
   return (
     <>

@@ -18,7 +18,7 @@ function SeeMyComp() {
 
     <>
     <SidebarRes />
-    <div className="container">
+    <div className="container text-bg-light">
         <table className="table table-striped table-hover">
             <thead>
                 <tr>

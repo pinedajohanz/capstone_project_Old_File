@@ -26,27 +26,14 @@ import SeeMyComp from './crud/user/SeeMyComp';
 import FileComp from './crud/user/FileComp';
 import SeeResponse from './crud/user/SeeResponse';
 import ResToComp from './crud/admin/ResToComp';
-import UpDelPage from './crud/admin/UpDelPage';
+import UpDelPage from './crud/admin/UpdateDeleteStatus';
 import ViewAllRes from './crud/admin/ViewAllRes';
-// const router = createBrowserRouter([
-//   {
-//     path: "/",
-//     element: <App/>,
-//   }
-//   // {
-//   //     path: "About",
-//   //     element: <AboutPage />,
-//   // },
-//   // {
-//   //     path: "ContactUs",
-//   //     element: <ContactUsPage />,
-//   // },
-// ]);
+import UpdateDeleteStatus from './crud/admin/UpdateDeleteStatus';
 
+//  Sets up several routes that map to different pages and components in the application.
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    {/* <RouterProvider router={router} /> */}
     <BrowserRouter>
         	  <Routes>
             	<Route path="/" element={<App />} />
@@ -59,13 +46,15 @@ root.render(
                 <Route path="/UserDash" element={<UserDash />} />
                 <Route path="/AdminDash" element={<AdminDash />} />
 
+                {/* Routing for User Side */}
                 <Route path="/SeeResPersoInfo" element={<SeeResPersoInfo />} />
                 {/* <Route path="/SeeMyComp" element={<SeeMyComp />} /> */}
                 <Route path="/FileComp" element={<FileComp />} />
                 <Route path="/SeeResponse" element={<SeeResponse />} />
-
+                
+                {/* Routing for Admin Side */}
                 <Route path="/ResToComp" element={<ResToComp />} />
-                <Route path="/UpDelPage" element={<UpDelPage />} />
+                <Route path="/UpdateDeleteStatus" element={<UpdateDeleteStatus />} />
                 <Route path="/ViewAllRes" element={<ViewAllRes />} />
             </Routes>
         </BrowserRouter>

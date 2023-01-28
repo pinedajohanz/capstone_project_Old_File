@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import "../../dashboard/Dashboard.css"
 import SidebarRes from "../../components/SidebarRes";
+import Viewbtn from "../Viewbtn"
 
 function SeeResponse() {
-
   const [MyComplaints, setMyComplaints] = useState([]);
-  const resident_id = localStorage.getItem('user.resident_id') // retrieve resident_id goods
-
-  //console.log(MyComplaints) // retrieve objects goods
+  // retrieve resident_id from browser local storage
+  const resident_id = localStorage.getItem('user.resident_id') 
   
+  // GET the personal resident complaints to display
   async function getMyComplaints() {
     const res = await fetch(`http://localhost:5000/MyComplaints/${resident_id}`);
 
@@ -19,10 +19,11 @@ function SeeResponse() {
       complaints.date_res = (new Date(complaints.date_res)).toLocaleDateString()
     }); 
     
+    // data transfer from array to setState then map it at table
     setMyComplaints(MyComplaintsArray);
     
   }
-
+  //  called after the component renders, if the [depend] have not changed, the effect will not run again.
   useEffect(() => {
     getMyComplaints();
   }, []);
@@ -30,29 +31,28 @@ function SeeResponse() {
   return (
     <>
     <SidebarRes />
-    <div className="container">
+    <div className="container text-bg-light">
         <table className="table table-bordered border-success table-hover">
             <thead>
                 <tr>
-                <th scope="col">Resident ID#</th>
-                <th scope="col">Complaint ID#</th>
-                <th scope="col">Complaint Message</th>
-                <th scope="col">Status</th>
-                <th scope="col">0-IN-PROGRESS / 1-COMPLETED</th>
-                <th scope="col">Date Attended by Barangay</th>
-                <th scope="col">Response from Barangay</th>
+                <th className="text-center" scope="col">Complaint ID#</th>
+                <th className="text-center" scope="col">Complaint Message</th>
+                <th className="text-center" scope="col">Status</th>
+                <th className="text-center" scope="col">View Response</th>
                 </tr>
             </thead>
             <tbody>
+            {/* maps over an array to display each item in a row from state */}
             {MyComplaints.map(Complaints => (
                   <tr key={Complaints.MyComplaints}>
-                    <td>{Complaints.resident_id}</td>
-                    <td>{Complaints.complaints_id}</td>
-                    <td>{Complaints.message_comp}</td>
-                    <td>{Complaints.status_msg}</td>
-                    <td>{Complaints.status_info_id}</td>
-                    <td>{Complaints.date_res}</td>
-                    <td>{Complaints.message_gov}</td>
+                    <td className="text-center" >{Complaints.complaints_id}</td>
+                    <td className="text-center fw-semibold" >{Complaints.message_comp}</td>
+                    <td className="text-center fw-bold" >{Complaints.status_msg}</td>
+                    <td>
+                      <Viewbtn 
+                      Complaint={Complaints.complaints_id} 
+                      />
+                    </td>
                   </tr>
                 ))
                 }

@@ -4,11 +4,6 @@ import {NavbarBootstrap} from "./Navbarbs"
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import axios from "axios";
-import { ToastContainer, toast, Flip } from 'react-toastify'; 
-import 'react-toastify/dist/ReactToastify.css';
-import { breadcrumbsClasses } from "@mui/material";
-import ContactUsPage from "../pages/ContactUsPage";
-
 
 export const LogIn = ({ setAuth }) => {
     // const [state, setState] = useState('initial/default value')
@@ -23,42 +18,37 @@ export const LogIn = ({ setAuth }) => {
     const onChange = (e) => {    //username     : testusername   
         setFormData({ ...formData, [e.target.name]: e.target.value })
     }
-    
-
+    // onSubmit form function for Log In authentication
     const onSubmitForm = async (e) => {
         e.preventDefault()
         
     try {
         //fetch api for POST method
+        // after it fetch the data from API, data is stored in 'formData' 
         axios.post("http://localhost:5000/login", formData
         )
 
+        // response from server is stored in 'res'
         .then(res => {
-            // console.log(res.data)
+            // data within that response is stored in the variable "data"
             const data = res.data
+            // resident_id will be stored in local storage browser
             localStorage.setItem('user.resident_id', data.resident_id);
-            // console.log({data})
+            // checks if the username is 'admin' then redirects to admin dashboard if true
             switch(data.username) {
                 case 'admin':
                     window.location = '/AdminDash';
                      break;
                 default:
-                    window.location = '/UserDash'
-                    break 
-
-                
-
+                    window.location = '/SeeResPersoInfo'; // old path /UserDash
+                    break; 
             }
         })
 
     } catch (error) {
         console.log(error.message)
-        toast.warn("Invalid Username or Password")
         }
     }
-
-
-
 
     return (
         <> 
@@ -80,26 +70,14 @@ export const LogIn = ({ setAuth }) => {
                 <Button className="block w-100" variant="primary" type="submit" >
                     Log in
                 </Button>
+                {/* redirect to Sign Up page */}
                 <Link to="/signup">
                     <button className="btn btn-success my-3 block w-100"> 
                     Don't have an account yet? Sign Up here!
                     </button>  
                 </Link>
-                
-                
             </Form>
-            <ToastContainer
-            position="top-right"
-            autoClose={9000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="colored" 
-            transition={Flip}  />
+            
         </div>
         
         </>

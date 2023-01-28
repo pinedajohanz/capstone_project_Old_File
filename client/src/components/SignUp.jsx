@@ -6,7 +6,7 @@ import Form from 'react-bootstrap/Form';
 import axios from "axios";
 
 export const SignUp = ( {setAuth} ) => {
-    
+    // setFormData assigns a value from input of user
     const [formData, setFormData] = useState({
         first_name: "",
         middle_init: "",
@@ -32,11 +32,11 @@ export const SignUp = ( {setAuth} ) => {
             //fetch api for POST method
             axios.post("http://localhost:5000/signup", formData
             )
+            // // response from server is stored in 'res'
             .then(res => {
-                console.log(res)
+                // if we got a 200 status it will redirect to Log In page
                 if(res.status === 200){
-                    window.location = '/login'
-                    
+                    window.location = '/login'    
                 }
             })
         } catch (error) {
@@ -103,6 +103,7 @@ export const SignUp = ( {setAuth} ) => {
                 <Button className="btn btn-primary block w-100" variant="primary" type="submit">
                     Submit
                 </Button>
+                {/* redirect to Log In page */}
                 <Link to="/login">
                     <button className="btn btn-success my-3 block w-100">
                        Already have an account? Log in here!

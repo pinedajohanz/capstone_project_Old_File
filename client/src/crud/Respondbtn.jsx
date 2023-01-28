@@ -1,7 +1,14 @@
 // import e from 'express';
 import React, { useState } from 'react'
+import { ToastContainer, toast, Flip } from 'react-toastify'; 
+
 
 function Respondbtn({ Complaints }) {
+    // toastify function
+    const notify = () => {
+        toast.success("Response Submitted!")
+    }
+
     const [message_gov, setmessage_gov] = useState("");
     // how to get complaints id ?
     //console.log(Complaints) // retrieve object goods
@@ -21,8 +28,10 @@ function Respondbtn({ Complaints }) {
                 headers: { "Content-Type": "application/json"},
                 body: JSON.stringify(body)
             });
+            // display notification that response is submitted
+            
+            notify()
 
-             console.log(res) 
         } catch (err) {
             console.error(err.message)
         }
@@ -32,6 +41,7 @@ function Respondbtn({ Complaints }) {
   return (
     <>
         {/* button of modal */}
+        <div className='d-grid gap-2'>
         <button 
             type="button" 
             className="btn btn-warning" 
@@ -40,6 +50,7 @@ function Respondbtn({ Complaints }) {
         >
             Respond
         </button>
+        </div>
         {/* id = "id22" */}
 
         {/* Header of inner modal */}
@@ -67,13 +78,15 @@ function Respondbtn({ Complaints }) {
                 <form onSubmit={reply} className="form-border my-3">
                 {/* <h2 className="text-center my-5">Respond to a Complaint</h2> */}
                 <label>Reply back to a Complaint:</label>
-                <textarea className="form-control my-3" type="text" placeholder="Type here" value={message_gov} onChange={e => setmessage_gov(e.target.value)} />
+                    <textarea className="form-control my-3" type="text" placeholder="Type here" value={message_gov} onChange={e => setmessage_gov(e.target.value)} />
                 {/* Edit: User na naka log in dapat naka-assign automatic sa resident ID below */}
                 <label> ID# (AUTO GENERATED)</label>
-                <input className="form-control my-3" type="number" placeholder="Complaints ID" value={complaints_id} aria-label="Disabled input example" disabled />
-            
-            <button className="btn btn-success my-3">Submit</button>
-        </form>
+                    <input className="form-control my-3" type="number" placeholder="Complaints ID" value={complaints_id} aria-label="Disabled input example" disabled />
+                <div className='d-grid gap-2'>
+                    <button className="btn btn-success my-3">Submit</button>
+                </div>
+                </form>
+                
                 
             </div>
             {/* footer of inner modal */}
@@ -87,10 +100,23 @@ function Respondbtn({ Complaints }) {
                 >
                     Close
                 </button>
+            
             </div>
             </div>
         </div>
         </div>
+        <ToastContainer
+            position="top-right"
+            autoClose={9000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="colored" 
+            transition={Flip}  />
     </>
   )
 }
