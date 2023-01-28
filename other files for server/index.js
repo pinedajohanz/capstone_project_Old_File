@@ -5,10 +5,10 @@ const bcrypt = require('bcrypt')
 const express = require('express') 
 const cors = require('cors')
 const {v4: uuidv4}  = require('uuid')
-// const uuid = require('uuid/v4')
 
 const generateJWT = require("./jwt/jwtGenerator")
 const auth = require("./middleware/auth")
+// pool = we can queries from psql (pool is the database connection)
 const pool = require('./db')
 const app = express() 
 
@@ -19,9 +19,8 @@ app.use(express.json()) //req.body
 
 ///////////ROUTES//////////////
 
+
 // [SIGN UP PAGE]
-// CREATE a resident row 
-// link - http://localhost:5000/signup
 app.post("/signup", async (req, res) => {
     try {
 
@@ -72,21 +71,8 @@ app.post("/signup", async (req, res) => {
     }
 });
 
-/* {
-    "first_name": "Juanica",
-    "middle_init": "B",
-    "last_name": "Pineda",
-    "birthday": "10/10/66",
-    "subdivision_address": "Woodlane Subdivision",
-    "house_street_address": "B9 L1",
-    "contact_number": "9975113834",
-    "email_address": "pinedarob@gmail.com",
-    "username": "rob3",
-    "password": "robpin345123"
-} */
 
 // [LOG IN PAGE] 
-// link - http://localhost:5000/login
 // find the username first if match then compare the password from user to database
 app.post('/login', async (req, res) => {
 try {
@@ -142,7 +128,6 @@ app.get('/verify', auth, async (req, res) => {
 })
 
 // SUBMIT A COMPLAINT (USER SIDE) [FILE A COMPLAINT]
-// link - http://localhost:5000/complaints
 app.post("/complaints", async (req, res) => {
     try {
         const { message_comp, location_of_complaint, type_of_complaint, date_of_filing, time_of_filing, resident_id  } = req.body
@@ -157,20 +142,8 @@ app.post("/complaints", async (req, res) => {
     }
 });
 
-/*
-{
-    "message_comp": "I would like to file a complaint",
-    "location_of_complaint": "Nesi Compound",
-    "type_of_complaint": "Drainage Issue",
-    "date_of_filing": "12/04/23",
-    "time_of_filing": "14:00",
-    "resident_id": 6,
-    "status_info_id": 0
-}
-*/
 
 // BARANGAY RESPONSE TO A COMPLAINT (ADMIN SIDE) [RESPOND TO COMPLAINTS SECTION]
-// link - http://localhost:5000/response
 app.post("/response", async (req, res) => {
     try {
         const { message_gov, complaints_id  } = req.body
@@ -186,10 +159,9 @@ app.post("/response", async (req, res) => {
 
 // CAN BE APPLY IN [RESPOND TO COMPLAINTS SECTION] THEN RIGHT SIDE IS A BUTTON TO REPLY BACK TO A COMPLAINT
 // DISPLAY ALL complaints with status (ADMIN SIDE)
-// link - http://localhost:5000/allcomplaints
 app.get("/allcomplaints", async (req, res) => {
     try {
-        const  allComplaints = await  pool.query('SELECT * FROM Complaints INNER JOIN status_info ON complaints.status_info_id = status_info.status_info_id');
+        const  allComplaints = await  pool.query('SELECT * FROM Complaints INNER JOIN status_info ON complaints.status_info_id = status_info.status_info_id ORDER BY status_msg DESC;');
         res.json(allComplaints.rows)
     } catch (error) {
         console.error(err.message)
@@ -197,7 +169,6 @@ app.get("/allcomplaints", async (req, res) => {
 });
 
 // DISPLAY ALL residents info (ADMIN SIDE) [VIEW RESIDENTS INFO SECTION]
-// (run on browser: http://localhost:5000/allresidents)
 app.get("/allresidents", async (req, res) => {
      try {
  	    const  allResidents = await  pool.query('SELECT * FROM Residents ');
@@ -208,7 +179,6 @@ app.get("/allresidents", async (req, res) => {
 });
 
 // DISPLAY Personal info with their complaints (ADMIN SIDE)
-// link - http://localhost:5000/allresidentscomp
 app.get("/allresidentscomp", async (req, res) => {
     try {
         const  allResidentscomp = await  pool.query(
@@ -220,7 +190,6 @@ app.get("/allresidentscomp", async (req, res) => {
 });
 
 // DISPLAY Complaints that are In Progress OR Completed status (ADMIN SIDE)
-// link - http://localhost:5000/allComplaints/status/1 or change last integer to other PK
 app.get("/allComplaintstat/:status_info_id", async (req, res) => {
     try {
         const { status_info_id } = req.params
@@ -234,12 +203,24 @@ app.get("/allComplaintstat/:status_info_id", async (req, res) => {
     }
 }); 
 
-// NEW QUERY
+// API: View button [SEE MY COMPLAINTS SECTION] [USER SIDE]
+app.get("/myResponse/:complaints_id", async (req, res) => {
+    try {
+        const { complaints_id } = req.params
+        const myResponse = await pool.query("SELECT responses.message_gov, responses.date_res FROM responses INNER JOIN complaints ON complaints.complaints_id = responses.complaints_id WHERE complaints.complaints_id = $1", 
+        [complaints_id])
+
+        res.json(myResponse.rows)
+    } catch (err) {
+        console.error(err.message)
+    }
+})
+
 // DISPLAY OWN COMPLAINT WITH RESPONSE AND STATUS FROM THE BARANGAY (PRIORITY USER SIDE) [SEE MY COMPLAINT SECTION]
 app.get("/myComplaints/:resident_id", async (req, res) => {
     try {
         const { resident_id } = req.params
-        const myComplaints = await pool.query("SELECT complaints.resident_id, complaints.complaints_id, complaints.message_comp, status_info.status_msg, complaints.status_info_id, responses.message_gov, responses.date_res FROM status_info INNER JOIN complaints ON status_info.status_info_id = complaints.status_info_id INNER JOIN responses ON complaints.complaints_id = responses.complaints_id  WHERE complaints.resident_id = $1", 
+        const myComplaints = await pool.query("SELECT complaints.resident_id, complaints.complaints_id, complaints.message_comp, status_info.status_msg FROM complaints INNER JOIN residents ON complaints.resident_id = residents.resident_id INNER JOIN status_info ON status_info.status_info_id = complaints.status_info_id WHERE complaints.resident_id = $1 ORDER BY status_msg ASC;", 
         [resident_id])
 
         res.json(myComplaints.rows)
@@ -266,7 +247,6 @@ app.get("/myResidentComp/:resident_id", async (req, res) => {
 
 
 // DISPLAY a SPECIFIC resident personal info (PRIORITY: USER SIDE) [PROFILE]
-// (run on browser: http://localhost:5000/allresidents/1 or change last integer to other PK)
 app.get("/allresidents/:resident_id", async (req, res) => {
     try {
         const { resident_id } = req.params
@@ -280,7 +260,6 @@ app.get("/allresidents/:resident_id", async (req, res) => {
 })
 
 // UPDATE a status of a complaint (ADMIN SIDE) [UPDATE STATUS/DELETE COMPLAINT SECTION]
-// link - http://localhost:5000/updatecomp/1 or change last integer
 app.put("/updatecomp/:id", async (req, res) => {
     try {
         const { id } = req.params
@@ -296,7 +275,6 @@ app.put("/updatecomp/:id", async (req, res) => {
 })
 
 // DELETE a complaint (ADMIN SIDE) [UPDATE STATUS/DELETE COMPLAINT SECTION]
-// link - http://localhost:5000/complaint/1 or change last integer
 app.delete("/complaint/:id", async (req, res) => {
     try {
         const {id} = req.params
@@ -310,15 +288,6 @@ app.delete("/complaint/:id", async (req, res) => {
         console.log(err.message)
     }
 })
-
-// app.get("/userinfo", async (req, res) => {
-//     try {
-        
-//     } catch (err) {
-//         console.log(err.message)
-//     }
-// }) 
-
 
 app.listen(5000,  ()  =>  { 
     console.log('App running on port 5000')  
